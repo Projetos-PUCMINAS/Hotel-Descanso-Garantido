@@ -5,7 +5,7 @@
 #include "funcionario.h"
 #include "quarto.h"
 #include "estadia.h"
-#include "checkout.h"  // Incluir o cabeçalho checkout.h
+#include "checkout.h"  // Incluir o cabeçalho checkout.hcsds\v\scd
 
 void menu() {
     int opcao;
