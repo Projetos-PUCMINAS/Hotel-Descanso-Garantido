@@ -1,6 +1,7 @@
 #include "cliente.h"
+#include "estadia.h"
+#include "util.h"
 
-// Array to store clients
 Cliente clientes[MAX_CLIENTES];
 int cliente_count = 0;
 
@@ -23,29 +24,83 @@ void salvar_clientes() {
 }
 
 void cadastrar_cliente() {
+		if (cliente_count >= MAX_CLIENTES) {
+				printf("Erro: Número máximo de clientes atingido.\n");
+				return;
+		}
+
 		Cliente novo_cliente;
+		limpar_buffer();
 		printf("Digite o nome do cliente: ");
-		scanf("%s", novo_cliente.nome);
+		fgets(novo_cliente.nome, sizeof(novo_cliente.nome), stdin);
+		novo_cliente.nome[strcspn(novo_cliente.nome, "\n")] = '\0'; // Remove o '\n' se presente
+	
+
 		printf("Digite o endereço do cliente: ");
-		scanf("%s", novo_cliente.endereco);
+		fgets(novo_cliente.endereco, sizeof(novo_cliente.endereco), stdin);
+		novo_cliente.endereco[strcspn(novo_cliente.endereco, "\n")] = '\0'; // Remove o '\n' se presente
+		limpar_buffer();
+
 		printf("Digite o telefone do cliente: ");
-		scanf("%s", novo_cliente.telefone);
+		fgets(novo_cliente.telefone, sizeof(novo_cliente.telefone), stdin);
+		novo_cliente.telefone[strcspn(novo_cliente.telefone, "\n")] = '\0'; // Remove o '\n' se presente
+		limpar_buffer();
+
 
 		// Gerar um código único
-		bool codigo_unico = false;
-		while (!codigo_unico) {
-				novo_cliente.codigo = rand() % 1000 + 1;
+		bool codigo_unico;
+		do {
 				codigo_unico = true;
+				novo_cliente.codigo = rand() % 1000 + 1;
 				for (int i = 0; i < cliente_count; i++) {
 						if (clientes[i].codigo == novo_cliente.codigo) {
 								codigo_unico = false;
 								break;
 						}
 				}
-		}
+		} while (!codigo_unico);
 
-		// Add new client to array
-		clientes[cliente_count++] = novo_cliente;
+		novo_cliente.pontos_fidelidade = 0;
+
+		clientes[cliente_count] = novo_cliente;
+		cliente_count++;
 		salvar_clientes();
 		printf("Cliente cadastrado com sucesso! Código: %d\n", novo_cliente.codigo);
+}
+
+
+void buscar_cliente_por_codigo(char* termo_busca) {
+		int codigo_busca;
+		bool encontrado = false;
+
+		// Tentar converter o termo de busca para um número (código)
+		if (sscanf(termo_busca, "%d", &codigo_busca) == 1) {
+				// Busca por código
+				for (int i = 0; i < cliente_count; i++) {
+						if (clientes[i].codigo == codigo_busca) {
+								printf("Código: %d\n", clientes[i].codigo);
+								printf("Nome: %s\n", clientes[i].nome);
+								printf("Endereço: %s\n", clientes[i].endereco);
+								printf("Telefone: %s\n", clientes[i].telefone);
+								printf("Pontos de Fidelidade: %d\n", clientes[i].pontos_fidelidade);
+								encontrado = true;
+								break;
+						}
+				}
+		} 
+
+		if (!encontrado) {
+				printf("Cliente não encontrado.\n");
+		}
+}
+
+
+int calcular_pontos_fidelidade(int codigo_cliente) {
+	int pontos = 0;
+	for (int i = 0; i < estadia_count; i++) {
+			if (estadias[i].codigo_cliente == codigo_cliente) {
+					pontos += estadias[i].quantidade_diarias * 10;
+			}
+	}
+	return pontos;
 }

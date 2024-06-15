@@ -13,8 +13,10 @@ typedef struct {
 extern Quarto quartos[MAX_QUARTOS];
 extern int quarto_count;
 
+
 void carregar_quartos();
 void salvar_quartos();
 void cadastrar_quarto();
+void alterar_status_quarto(int numero, const char* novo_status);
 
-#endif
+#endif // QUARTO_H

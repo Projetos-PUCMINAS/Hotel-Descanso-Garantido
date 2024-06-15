@@ -1,6 +1,9 @@
 #include "quarto.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
+#include "util.h"
 
 Quarto quartos[MAX_QUARTOS];
 int quarto_count = 0;
@@ -23,6 +26,7 @@ void salvar_quartos() {
 		}
 }
 
+
 void cadastrar_quarto() {
 		if (quarto_count >= MAX_QUARTOS) {
 				printf("Erro: Número máximo de quartos atingido.\n");
@@ -30,14 +34,45 @@ void cadastrar_quarto() {
 		}
 
 		Quarto novo_quarto;
-		novo_quarto.numero = rand() % 1000 + 1; // Gerar número de quarto automaticamente
+
+		// Gerar um número único para o quarto
+		bool numero_unico;
+		do {
+				numero_unico = true;
+				novo_quarto.numero = rand() % 1000 + 1;
+				for (int i = 0; i < quarto_count; i++) {
+						if (quartos[i].numero == novo_quarto.numero) {
+								numero_unico = false;
+								break;
+						}
+				}
+		} while (!numero_unico);
+	
+		limpar_buffer();
 		printf("Digite a quantidade de hóspedes: ");
 		scanf("%d", &novo_quarto.quantidade_hospedes);
+		 // Limpa o buffer de entrada
+
 		printf("Digite o valor da diária: ");
 		scanf("%lf", &novo_quarto.valor_diaria);
+		limpar_buffer(); // Limpa o buffer de entrada
+
 		strcpy(novo_quarto.status, "desocupado");
 
 		quartos[quarto_count++] = novo_quarto;
 		salvar_quartos();
-		printf("Quarto cadastrado com sucesso! Número: %d\n", novo_quarto.numero);
+		printf("Quarto cadastrado com sucesso! Número: %d, Status: %s\n", novo_quarto.numero, novo_quarto.status);
+}
+
+
+void alterar_status_quarto(int numero, const char* novo_status) {
+		for (int i = 0; i < quarto_count; i++) {
+				if (quartos[i].numero == numero) {
+						strcpy(quartos[i].status, novo_status);
+						salvar_quartos();
+						printf("Status do quarto %d alterado para %s.\n", numero, novo_status);
+						return;
+				}
+		}
+		printf("Erro: Quarto com número %d não encontrado.\n", numero);
 }
