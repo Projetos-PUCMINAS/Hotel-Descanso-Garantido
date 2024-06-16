@@ -93,13 +93,17 @@ void buscar_cliente_por_codigo(char* termo_busca) {
 
 int calcular_pontos_fidelidade(int codigo_cliente) {
 		int pontos = 0;
+		carregar_estadias();
 		for (int i = 0; i < estadia_count; i++) {
 				if (estadias[i].codigo_cliente == codigo_cliente) {
 						pontos += estadias[i].quantidade_diarias * 10;
 				}
 		}
+
 		return pontos;
 }
+
+
 
 void mostrar_todos_clientes() {
 		if (cliente_count == 0) {
