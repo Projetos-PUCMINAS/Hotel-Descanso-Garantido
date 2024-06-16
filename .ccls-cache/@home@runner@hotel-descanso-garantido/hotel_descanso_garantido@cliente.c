@@ -1,6 +1,6 @@
 #include "cliente.h"
-#include "estadia.h"
-#include "util.h"
+#include "estadia.h" 
+#include "util.h" 
 
 Cliente clientes[MAX_CLIENTES];
 int cliente_count = 0;
@@ -30,24 +30,23 @@ void cadastrar_cliente() {
 		}
 
 		Cliente novo_cliente;
-		limpar_buffer();
+
+		limpar_buffer(); 
 		printf("Digite o nome do cliente: ");
 		fgets(novo_cliente.nome, sizeof(novo_cliente.nome), stdin);
-		novo_cliente.nome[strcspn(novo_cliente.nome, "\n")] = '\0'; // Remove o '\n' se presente
-	
+		novo_cliente.nome[strcspn(novo_cliente.nome, "\n")] = '\0'; 
 
-		printf("Digite o endereço do cliente: ");
+		limpar_buffer();
+		printf("Digite o endereço do cliente (Cidade-estado,Bairro,Rua-nº): ");
 		fgets(novo_cliente.endereco, sizeof(novo_cliente.endereco), stdin);
-		novo_cliente.endereco[strcspn(novo_cliente.endereco, "\n")] = '\0'; // Remove o '\n' se presente
-		limpar_buffer();
+		novo_cliente.endereco[strcspn(novo_cliente.endereco, "\n")] = '\0'; 
 
-		printf("Digite o telefone do cliente: ");
+		limpar_buffer();
+		printf("Digite o telefone do cliente (DD numero): ");
 		fgets(novo_cliente.telefone, sizeof(novo_cliente.telefone), stdin);
-		novo_cliente.telefone[strcspn(novo_cliente.telefone, "\n")] = '\0'; // Remove o '\n' se presente
-		limpar_buffer();
+		novo_cliente.telefone[strcspn(novo_cliente.telefone, "\n")] = '\0'; 
 
 
-		// Gerar um código único
 		bool codigo_unico;
 		do {
 				codigo_unico = true;
@@ -68,14 +67,12 @@ void cadastrar_cliente() {
 		printf("Cliente cadastrado com sucesso! Código: %d\n", novo_cliente.codigo);
 }
 
-
 void buscar_cliente_por_codigo(char* termo_busca) {
 		int codigo_busca;
 		bool encontrado = false;
 
-		// Tentar converter o termo de busca para um número (código)
+	
 		if (sscanf(termo_busca, "%d", &codigo_busca) == 1) {
-				// Busca por código
 				for (int i = 0; i < cliente_count; i++) {
 						if (clientes[i].codigo == codigo_busca) {
 								printf("Código: %d\n", clientes[i].codigo);
@@ -87,20 +84,36 @@ void buscar_cliente_por_codigo(char* termo_busca) {
 								break;
 						}
 				}
-		} 
+		}
 
 		if (!encontrado) {
 				printf("Cliente não encontrado.\n");
 		}
 }
 
-
 int calcular_pontos_fidelidade(int codigo_cliente) {
-	int pontos = 0;
-	for (int i = 0; i < estadia_count; i++) {
-			if (estadias[i].codigo_cliente == codigo_cliente) {
-					pontos += estadias[i].quantidade_diarias * 10;
-			}
-	}
-	return pontos;
+		int pontos = 0;
+		for (int i = 0; i < estadia_count; i++) {
+				if (estadias[i].codigo_cliente == codigo_cliente) {
+						pontos += estadias[i].quantidade_diarias * 10;
+				}
+		}
+		return pontos;
+}
+
+void mostrar_todos_clientes() {
+		if (cliente_count == 0) {
+				printf("Nenhum cliente cadastrado.\n");
+				return;
+		}
+
+		printf("Lista de Clientes:\n");
+		for (int i = 0; i < cliente_count; i++) {
+				printf("\nCliente %d:\n", i + 1);
+				printf("Código: %d\n", clientes[i].codigo);
+				printf("Nome: %s\n", clientes[i].nome);
+				printf("Endereço: %s\n", clientes[i].endereco);
+				printf("Telefone: %s\n", clientes[i].telefone);
+				printf("Pontos de Fidelidade: %d\n", clientes[i].pontos_fidelidade);
+		}
 }

@@ -24,5 +24,6 @@ void salvar_clientes();
 void cadastrar_cliente();
 void buscar_cliente_por_codigo(char* termo_busca);
 int calcular_pontos_fidelidade(int codigo_cliente);
+void mostrar_todos_clientes();
 
 #endif // CLIENTE_H

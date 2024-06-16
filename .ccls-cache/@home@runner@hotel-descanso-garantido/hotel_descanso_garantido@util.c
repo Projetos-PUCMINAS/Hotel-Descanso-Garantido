@@ -2,6 +2,6 @@
 #include <stdio.h>
 
 void limpar_buffer() {
-    int ch;
-    while ((ch = getchar()) != '\n' && ch != EOF);
+int ch;
+while ((ch = getchar()) != '\n' && ch != EOF);
 }
