@@ -7,15 +7,14 @@ typedef struct TQuarto {
 		int numero;
 		int quantidade_hospedes;
 		float valor_diaria;
-		char status[11]; // "desocupado" ou "ocupado"
+		char status[11]; 
 } Quarto;
 
-FILE* inicializa_sistema_quartos();
-void cadastra_quarto(FILE *f);
-void altera_quarto(FILE *f);
-void exclui_quarto(FILE *f);
-void imprime_quartos(FILE *f);
-int localiza_quarto(FILE *f, int numero);
-int gera_num_quarto(FILE *f);
-int verifica_disponibilidade_quarto(FILE *f, int numero_quarto, char *data_entrada, char *data_saida);
+FILE* InicializarSistemaQuartos();
+void CadastrarQuarto(FILE *f);
+void AlterarQuarto(FILE *f);
+void ExcluirQuarto(FILE *f);
+void ImprimirQuartos(FILE *f);
+int LocalizarQuarto(FILE *f, int numero);
+int GeradorNumQuarto(FILE *f);
 #endif // QUARTOS_H_INCLUDED

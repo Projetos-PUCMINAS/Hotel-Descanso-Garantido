@@ -10,18 +10,18 @@ typedef struct {
 		char nome_cliente[50];
 		char endereco[100];
 		char telefone_cliente[15];
+		int pontos_fidelidade;
 		int excluido;
 } Cliente;
 
-FILE* inicializa_sistema();
-int localiza_cliente(FILE *f, int cod_cliente);
-int gera_cod_cliente(FILE *f);
-void cadastra_cliente(FILE *f);
-void altera_cliente(FILE *f);
-void exclui_cliente(FILE *f);
-void imprime_clientes(FILE *f, FILE *f_estadias);
-void pesquisa_cliente_por_nome(FILE *f, char *nome);
-void pesquisa_cliente_por_codigo(FILE *f, int cod_cliente);
-int calcula_pontos_fidelidade(FILE *f_estadias, int cod_cliente);
+FILE* InicializarSistemaClientes();
+int LocalizarCliente(FILE *f, int cod_cliente);
+int GeradorCodCliente(FILE *f);
+void CadastrarCliente(FILE *f);
+void AlterarCliente(FILE *f);
+void ExcluirCliente(FILE *f);
+void ImprimirClientes(FILE *f, FILE *f_estadias);
+void PesquisarClientePorNome(FILE *f, char *nome);
+void PesquisarClientePorCodigo(FILE *f, int cod_cliente);
 
 #endif // CLIENTES_H

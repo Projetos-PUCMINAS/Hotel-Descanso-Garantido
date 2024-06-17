@@ -12,13 +12,12 @@ typedef struct {
     int num_quarto;
 } Estadia;
 
-FILE *inicializa_sistema_estadias();
-void cadastra_estadia(FILE *f, FILE *f_clientes, FILE *f_quartos);
-int gera_cod_estadia(FILE *f);
-int calcula_quantidade_diarias(char *data_entrada, char *data_saida);
-void imprime_estadias(FILE *f);
-void baixa_estadia(FILE *f, FILE *f_quartos, FILE *f_clientes, int codigo_estadia);
-void mostra_estadias_cliente(FILE *f_estadias, FILE *f_clientes, char *nome_or_codigo);
-int calcula_pontos_fidelidade_cliente(FILE *f_estadias, FILE *f_clientes, int cod_cliente);
-
+FILE *InicializarSistemaEstadias();
+int VerificarDispobilidadeQuarto(FILE *f, int numero_quarto, char *data_entrada, char *data_saida);
+void CadastrarEstadia(FILE *f, FILE *f_clientes, FILE *f_quartos);
+int GeradorCodEstadia(FILE *f);
+int CalcularQuantDiarias(char *data_entrada, char *data_saida);
+void ImprimirEstadias(FILE *f);
+void BaixaEstadia(FILE *f, FILE *f_quartos, FILE *f_clientes, int codigo_estadia);
+void MostrarEstadiasCliente(FILE *f_estadias, FILE *f_clientes, char *nome_or_codigo);
 #endif // ESTADIAS_H_INCLUDED
