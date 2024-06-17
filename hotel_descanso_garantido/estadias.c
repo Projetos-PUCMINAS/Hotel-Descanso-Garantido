@@ -5,6 +5,22 @@
 #include <stdlib.h>
 #include <string.h>
 
+FILE *inicializa_sistema_estadias() {
+    FILE *f;
+
+    if ((f = fopen("estadias.dat", "r+b")) == NULL) {
+        printf("Arquivo de estadias não existia... criando arquivo!\n");
+
+        if ((f = fopen("estadias.dat", "w+b")) == NULL) {
+            printf("Erro na criação do arquivo de estadias!\n");
+            exit(1);
+        }
+        system("pause");
+    }
+
+    return f;
+}
+
 void cadastra_estadia(FILE *f, FILE *f_clientes, FILE *f_quartos) {
   Estadia estadia;
   Cliente cliente;
@@ -83,7 +99,7 @@ void cadastra_estadia(FILE *f, FILE *f_clientes, FILE *f_quartos) {
   printf("Estadia cadastrada com sucesso!\n");
 }
 
-void baixa_estadia(FILE *f, FILE *f_quartos, FILE *f_clientes, int codigo_estadia)
+void baixa_estadia(FILE *f, FILE *f_quartos, FILE *f_clientes, int codigo_estadia) 
  {
   Estadia estadia;
   Quarto quarto;

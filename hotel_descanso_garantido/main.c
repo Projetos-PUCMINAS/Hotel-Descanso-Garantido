@@ -36,45 +36,55 @@ int main() {
         switch (op) {
             case '1':
                 // Menu de Clientes
-                do {
-                    printf("\nMenu Clientes:\n");
-                    printf("a - Cadastrar cliente\n");
-                    printf("b - Alterar cliente\n");
-                    printf("c - Excluir cliente\n");
-                    printf("d - Listar todos os clientes\n");
-                    printf("e - Voltar ao menu anterior\n");
-                    printf("f - Calcular pontos de fidelidade do cliente\n");
-                    op = getchar();
-                    getchar(); // Consume newline left by getchar
-                    switch (op) {
-                        case 'a':
-                            cadastra_cliente(f_clientes);
-                            break;
-                        case 'b':
-                            altera_cliente(f_clientes);
-                            break;
-                        case 'c':
-                            exclui_cliente(f_clientes);
-                            break;
-                        case 'd':
-                            imprime_clientes(f_clientes);
-                            system("pause");
-                            break;
-                        case 'f':
-                            {
-                                int cod_cliente;
-                                printf("Digite o código do cliente para calcular os pontos de fidelidade: ");
-                                scanf("%d", &cod_cliente);
-                                getchar(); // Consume newline left by scanf
+            do {
+                printf("\nMenu Clientes:\n");
+                printf("a - Cadastrar cliente\n");
+                printf("b - Alterar cliente\n");
+                printf("c - Excluir cliente\n");
+                printf("d - Listar todos os clientes\n");
+                printf("e - Pesquisar cliente por nome\n");
+                printf("f - Pesquisar cliente por código\n");
+                printf("g - Voltar ao menu anterior\n");
+                op = getchar();
+                getchar(); // Consume newline left by getchar
+                switch (op) {
+                    case 'a':
+                        cadastra_cliente(f_clientes);
+                        break;
+                    case 'b':
+                        altera_cliente(f_clientes);
+                        break;
+                    case 'c':
+                        exclui_cliente(f_clientes);
+                        break;
+                    case 'd':
+                        imprime_clientes(f_clientes, f_estadias);
+                        system("pause");
+                        break;
+                    case 'e': {
+                        int cod_cliente;
+                        printf("Digite o código do cliente para pesquisar: ");
+                        scanf("%d", &cod_cliente);
+                        getchar(); // Consume newline left by scanf
 
-                                int pontos_fidelidade = calcula_pontos_fidelidade_cliente(f_estadias, f_clientes, cod_cliente);
-                                printf("Pontos de fidelidade do cliente: %d\n", pontos_fidelidade);
-                                system("pause");
-                                break;
-                            }
+                        pesquisa_cliente_por_codigo(f_clientes, cod_cliente);
+                        system("pause");
+                        break;
                     }
-                } while (op != 'e');
-                break;
+                    case 'f': {
+                        char nome[50];
+                        printf("Digite o nome do cliente para pesquisar: ");
+                        fgets(nome, sizeof(nome), stdin);
+                        nome[strcspn(nome, "\n")] = '\0'; // Remove newline if present
+
+                        pesquisa_cliente_por_nome(f_clientes, nome);
+                        system("pause");
+                        while (getchar() != '\n'); // Limpa o buffer de entrada
+                        break;
+                    }
+                }
+            } while (op != 'g');
+            break;
             case '2':
                 // Menu de Funcionários
                 do {
