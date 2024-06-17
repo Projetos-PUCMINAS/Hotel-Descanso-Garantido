@@ -6,18 +6,16 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define MAX_CLIENTES 100
-
-typedef struct {
+struct Tcliente
+{
 		int cod_cliente;
-		char nome_cliente[50];
-		char endereco_cliente[100];
+		char nome[50];
+		char endereco[100];
 		char telefone_cliente[15];
-		int pontos_fidelidade;
-} Cliente;
+};
+typedef struct Tcliente cliente;
 
-extern Cliente clientes[MAX_CLIENTES];
-extern int qtd_clientes;
+
 
 void CarregarClientes(); 
 void SalvarClientes();

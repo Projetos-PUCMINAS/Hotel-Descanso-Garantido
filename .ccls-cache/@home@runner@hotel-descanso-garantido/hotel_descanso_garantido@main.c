@@ -1,98 +1,204 @@
-#include "cliente.h"
-#include "estadia.h"
-#include "funcionario.h"
-#include "quarto.h"
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-void menu() {
-    int opcao;
-    do {
-        printf("\nMenu:\n");
-        printf("1. Cadastrar cliente\n");
-        printf("2. Cadastrar funcionário\n");
-        printf("3. Cadastrar quarto\n");
-        printf("4. Cadastrar estadia\n");
-        printf("5. Dar baixa em estadia\n");
-        printf("6. Buscar cliente por código\n");
-        printf("7. Buscar funcionário por código\n");
-        printf("8. Mostrar estadias de um cliente\n");
-        printf("9. Mostrar todos os clientes\n");
-        printf("10. Mostrar todos os funcionários\n");
-        printf("11. Mostrar todos os quartos\n");
-        printf("12. Mostrar todas as estadias\n");
-        printf("13. Sair\n");
-        printf("Digite a opção: ");
-        scanf("%d", &opcao);
-
-        switch (opcao) {
-            case 1:
-                CadastrarCliente();
-                break;
-            case 2:
-                CadastrarFuncionario();
-                break;
-            case 3:
-                CadastrarQuarto();
-                break;
-            case 4:
-                CadastrarEstadia();
-                break;
-            case 5:
-                DarBaixaEstadia();
-                break;
-            case 6: {
-                char termo_busca[50];
-                printf("Digite o nome ou código do cliente: ");
-                scanf(" %[^\n]", termo_busca);
-                BuscarClienteCodigo(termo_busca);
-                break;
-            }
-            case 7: {
-                char termo_busca[50];
-                printf("Digite o nome ou código do funcionário: ");
-                scanf(" %[^\n]", termo_busca);
-                BuscarFuncionarioCodigo(termo_busca);
-                break;
-            }
-            case 8: {
-                int codigo_cliente;
-                printf("Digite o código do cliente: ");
-                scanf("%d", &codigo_cliente);
-                MostrarEstadiasCliente(codigo_cliente);
-                break;
-            }
-            case 9:
-                MostrarTodosClientes();
-                break;
-            case 10:
-                MostrarTodosFuncionarios();
-                break;
-            case 11:
-                MostrarTodosQuartos();
-                break;
-            case 12:
-                MostrarTodasEstadias();
-                break;
-            case 13:
-                printf("Saindo...\n");
-                break;
-            default:
-                printf("Opção inválida. Tente novamente.\n");
-        }
-    } while (opcao != 13);
-}
+#include "clientes.h"
+#include "funcionarios.h"
+#include "quartos.h"
+#include "estadias.h"
 
 int main() {
-    CarregarClientes();
-    CarregarFuncionarios();
-    CarregarQuartos();
-    CarregarEstadias();
-    menu();
-    SalvarClientes();     
-    SalvarFuncionarios(); 
-    SalvarQuartos();      
-    SalvarEstadias();     
+    FILE *f_clientes;
+    FILE *f_funcionarios;
+    FILE *f_quartos;
+    FILE *f_estadias;
+    char op;
+
+    // Inicializa o sistema de clientes
+    f_clientes = inicializa_sistema();
+
+    // Inicializa o sistema de funcionários
+    f_funcionarios = inicializa_sistema_func();
+
+    // Inicializa o sistema de quartos
+    f_quartos = inicializa_sistema_quartos();
+
+    // Inicializa o sistema de estadias
+    f_estadias = inicializa_sistema_estadias();
+
+    do {
+        printf("\nEscolha:\n");
+        printf("1 - Menu de Clientes\n");
+        printf("2 - Menu de Funcionários\n");
+        printf("3 - Menu de Quartos\n");
+        printf("4 - Menu de Estadias\n");
+        printf("5 - Sair do sistema\n");
+        op = getchar();
+        getchar(); // Consume newline left by getchar
+        switch (op) {
+            case '1':
+                // Menu de Clientes
+                do {
+                    printf("\nMenu Clientes:\n");
+                    printf("a - Cadastrar cliente\n");
+                    printf("b - Alterar cliente\n");
+                    printf("c - Excluir cliente\n");
+                    printf("d - Listar todos os clientes\n");
+                    printf("e - Voltar ao menu anterior\n");
+                    printf("f - Calcular pontos de fidelidade do cliente\n");
+                    op = getchar();
+                    getchar(); // Consume newline left by getchar
+                    switch (op) {
+                        case 'a':
+                            cadastra_cliente(f_clientes);
+                            break;
+                        case 'b':
+                            altera_cliente(f_clientes);
+                            break;
+                        case 'c':
+                            exclui_cliente(f_clientes);
+                            break;
+                        case 'd':
+                            imprime_clientes(f_clientes);
+                            system("pause");
+                            break;
+                        case 'f':
+                            {
+                                int cod_cliente;
+                                printf("Digite o código do cliente para calcular os pontos de fidelidade: ");
+                                scanf("%d", &cod_cliente);
+                                getchar(); // Consume newline left by scanf
+
+                                int pontos_fidelidade = calcula_pontos_fidelidade_cliente(f_estadias, f_clientes, cod_cliente);
+                                printf("Pontos de fidelidade do cliente: %d\n", pontos_fidelidade);
+                                system("pause");
+                                break;
+                            }
+                    }
+                } while (op != 'e');
+                break;
+            case '2':
+                // Menu de Funcionários
+                do {
+                    printf("\nMenu Funcionários:\n");
+                    printf("a - Cadastrar funcionário\n");
+                    printf("b - Alterar funcionário\n");
+                    printf("c - Excluir funcionário\n");
+                    printf("d - Listar todos os funcionários\n");
+                    printf("e - Pesquisar funcionário por código\n");
+                    printf("f - Pesquisar funcionário por nome\n");
+                    printf("g - Voltar ao menu anterior\n");
+                    op = getchar();
+                    getchar(); // Consume newline left by getchar
+                    switch (op) {
+                        case 'a':
+                            cadastra_funcionario(f_funcionarios);
+                            break;
+                        case 'b':
+                            altera_funcionario(f_funcionarios);
+                            break;
+                        case 'c':
+                            exclui_funcionario(f_funcionarios);
+                            break;
+                        case 'd':
+                            imprime_funcionarios(f_funcionarios);
+                            system("pause");
+                            break;
+                        case 'e': {
+                            int cod;
+                            printf("Digite o código do funcionário: ");
+                            scanf("%d", &cod);
+                            getchar(); // Consume newline left by scanf
+                            pesquisa_funcionario_por_codigo(f_funcionarios, cod);
+                            system("pause");
+                            break;
+                        }
+                        case 'f': {
+                            char nome[50];
+                            printf("Digite o nome do funcionário: ");
+                            fgets(nome, sizeof(nome), stdin);
+                            nome[strcspn(nome, "\n")] = '\0'; // Remove newline if present
+
+                            pesquisa_funcionario_por_nome(f_funcionarios, nome);
+                            system("pause");
+                            while (getchar() != '\n'); // Limpa o buffer de entrada
+                            break;
+                        }
+                    }
+                } while (op != 'g');
+                break;
+            case '3':
+                // Menu de Quartos
+                do {
+                    printf("\nMenu Quartos:\n");
+                    printf("a - Cadastrar quarto\n");
+                    printf("b - Alterar quarto\n");
+                    printf("c - Excluir quarto\n");
+                    printf("d - Listar todos os quartos\n");
+                    printf("e - Voltar ao menu anterior\n");
+                    op = getchar();
+                    getchar(); // Consume newline left by getchar
+                    switch (op) {
+                        case 'a':
+                            cadastra_quarto(f_quartos);
+                            break;
+                        case 'b':
+                            altera_quarto(f_quartos);
+                            break;
+                        case 'c':
+                            exclui_quarto(f_quartos);
+                            break;
+                        case 'd':
+                            imprime_quartos(f_quartos);
+                            system("pause");
+                            break;
+                    }
+                } while (op != 'e');
+                break;
+            case '4':
+                // Menu de Estadias
+                do {
+                    printf("\nMenu Estadias:\n");
+                    printf("a - Cadastrar estadia\n");
+                    printf("b - Listar todas as estadias\n");
+                    printf("c - Baixa de estadia\n");
+                    printf("d - Voltar ao menu anterior\n");
+                    op = getchar();
+                    getchar(); // Consume newline left by getchar
+                    switch (op) {
+                        case 'a':
+                            cadastra_estadia(f_estadias, f_clientes, f_quartos);
+                            break;
+                        case 'b':
+                            imprime_estadias(f_estadias);
+                            system("pause");
+                            break;
+                        case 'c':
+                            {
+                                int codigo_estadia;
+                                printf("Digite o código da estadia para realizar a baixa: ");
+                                scanf("%d", &codigo_estadia);
+                                getchar(); // Consume newline left by scanf
+
+                                baixa_estadia(f_estadias, f_quartos, f_clientes, codigo_estadia);
+                                system("pause");
+                                break;
+                            }
+                    }
+                } while (op != 'd');
+                break;
+            case '5':
+                printf("Encerrando o sistema...\n");
+                break;
+            default:
+                printf("Opção inválida! Tente novamente.\n");
+                break;
+        }
+    } while (op != '5');
+
+    // Fecha os arquivos
+    fclose(f_clientes);
+    fclose(f_funcionarios);
+    fclose(f_quartos);
+    fclose(f_estadias);
+
     return 0;
 }
