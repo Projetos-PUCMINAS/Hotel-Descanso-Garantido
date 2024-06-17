@@ -45,14 +45,20 @@ void CadastrarQuarto() {
 				}
 		} while (!numero_unico);
 
-		limpar_buffer();
-		printf("Digite a quantidade de hóspedes: ");
-		scanf("%d", &novo_quarto.qtd_hospedes);
-		limpar_buffer(); 
+	
+	limpar_buffer();
+	printf("Digite a quantidade de hóspedes: ");
+	while (scanf("%d", &novo_quarto.qtd_hospedes) != 1 || novo_quarto.qtd_hospedes <= 0) {
+			printf("Erro: Quantidade de hóspedes inválida. Digite novamente: ");
+			limpar_buffer(); 
+	}
 
-		printf("Digite o valor da diária: ");
-		scanf("%lf", &novo_quarto.v_diaria);
-		limpar_buffer(); 
+	limpar_buffer();
+	printf("Digite o valor da diária: ");
+	while (scanf("%lf", &novo_quarto.v_diaria) != 1 || novo_quarto.v_diaria <= 0) {
+			printf("Erro: Valor da diária inválido. Digite novamente: ");
+			limpar_buffer(); 
+	}
 
 		strcpy(novo_quarto.status, "desocupado");
 

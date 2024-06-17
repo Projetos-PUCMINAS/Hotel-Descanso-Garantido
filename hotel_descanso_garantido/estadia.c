@@ -27,10 +27,32 @@ void SalvarEstadias() {
         fclose(file);
     }
 }
+bool ValidarData(const char* data) {
+    int dia, mes, ano;
+    if (sscanf(data, "%2d/%2d/%4d", &dia, &mes, &ano) != 3) {
+        return false; 
+    }
 
-int calcular_diarias(const char *data_entrada, const char *data_saida) {
+    if (ano < 1900 || ano > 2100 || mes < 1 || mes > 12 || dia < 1) {
+        return false; 
+    }
+
+    int dias_mes[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+    if (mes == 2) {
+        bool bissexto = (ano % 4 == 0 && ano % 100 != 0) || (ano % 400 == 0);
+        if (bissexto) {
+            dias_mes[1] = 29; 
+        }
+    }
+
+    return dia <= dias_mes[mes - 1];
+}
+
+int CalcularDiarias(const char *data_entrada, const char *data_saida) {
     int dia_entrada, mes_entrada, ano_entrada;
     int dia_saida, mes_saida, ano_saida;
+
     sscanf(data_entrada, "%d/%d/%d", &dia_entrada, &mes_entrada, &ano_entrada);
     sscanf(data_saida, "%d/%d/%d", &dia_saida, &mes_saida, &ano_saida);
 
@@ -49,7 +71,11 @@ void CadastrarEstadia() {
     int codigo_cliente;
     limpar_buffer();
     printf("Digite o código do cliente: ");
-    scanf("%d", &codigo_cliente);
+    if (scanf("%d", &codigo_cliente) != 1) {
+        printf("Erro: Código do cliente inválido.\n");
+        limpar_buffer();
+        return;
+    }
     limpar_buffer(); 
 
     bool cliente_encontrado = false;
@@ -70,17 +96,35 @@ void CadastrarEstadia() {
     nova_estadia.codigo_cliente = codigo_cliente;
 
     printf("Digite a data de entrada (dd/mm/aaaa): ");
-    scanf("%s", nova_estadia.data_entrada);
-    limpar_buffer(); 
-    printf("Digite a data de saída (dd/mm/aaaa): ");
-    scanf("%s", nova_estadia.data_saida);
+    if (scanf("%10s", nova_estadia.data_entrada) != 1 || !ValidarData(nova_estadia.data_entrada)) {
+        printf("Erro: Data de entrada inválida.\n");
+        limpar_buffer();
+        return;
+    }
     limpar_buffer(); 
 
-    nova_estadia.qtd_diarias = calcular_diarias(nova_estadia.data_entrada, nova_estadia.data_saida);
+    printf("Digite a data de saída (dd/mm/aaaa): ");
+    if (scanf("%10s", nova_estadia.data_saida) != 1 || !ValidarData(nova_estadia.data_saida)) {
+        printf("Erro: Data de saída inválida.\n");
+        limpar_buffer();
+        return;
+    }
+    limpar_buffer(); 
+
+    if (CalcularDiarias(nova_estadia.data_entrada, nova_estadia.data_saida) < 0) {
+        printf("Erro: A data de saída não pode ser anterior à data de entrada.\n");
+        return;
+    }
+
+    nova_estadia.qtd_diarias = CalcularDiarias(nova_estadia.data_entrada, nova_estadia.data_saida);
 
     int quantidade_hospedes;
     printf("Digite a quantidade de hóspedes: ");
-    scanf("%d", &quantidade_hospedes);
+    if (scanf("%d", &quantidade_hospedes) != 1 || quantidade_hospedes <= 0) {
+        printf("Erro: Quantidade de hóspedes inválida.\n");
+        limpar_buffer();
+        return;
+    }
     limpar_buffer(); 
 
     bool quarto_encontrado = false;
@@ -107,8 +151,8 @@ void CadastrarEstadia() {
     SalvarEstadias();
 
     printf("Estadia cadastrada com sucesso! Código: %d\n", nova_estadia.cod_estadia);
-    MostrarNumeroQuarto(nova_estadia.cod_estadia);
 }
+
 
 
 void DarBaixaEstadia() {

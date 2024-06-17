@@ -1,6 +1,8 @@
 #ifndef ESTADIA_H
 #define ESTADIA_H
 
+#include <stdbool.h>
+
 #define MAX_ESTADIAS 100
 
 typedef struct {
@@ -22,5 +24,7 @@ void DarBaixaEstadia();
 void MostrarEstadiasCliente(int codigo_cliente);
 void MostrarNumeroQuarto(int codigo_estadia); 
 void MostrarTodasEstadias();
+bool ValidarData(const char* data);
+int CalcularDiarias(const char *data_entrada, const char *data_saida);
 
 #endif // ESTADIA_H

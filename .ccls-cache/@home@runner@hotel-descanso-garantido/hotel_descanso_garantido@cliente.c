@@ -46,6 +46,11 @@ void CadastrarCliente() {
 		fgets(novo_cliente.telefone_cliente, sizeof(novo_cliente.telefone_cliente), stdin);
 		novo_cliente.telefone_cliente[strcspn(novo_cliente.telefone_cliente, "\n")] = '\0'; 
 
+	
+		if (strlen(novo_cliente.nome_cliente) == 0 || strlen(novo_cliente.endereco_cliente) == 0 || strlen(novo_cliente.telefone_cliente) == 0) {
+				printf("Erro: Todos os campos devem ser preenchidos.\n");
+				return;
+		}
 
 		bool codigo_unico;
 		do {

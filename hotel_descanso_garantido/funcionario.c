@@ -47,8 +47,16 @@ void CadastrarFuncionario() {
 
   limpar_buffer();
   printf("Digite o salário do funcionário: ");
-  scanf("%lf", &novo_funcionario.salario);
+  while (scanf("%lf", &novo_funcionario.salario) != 1 || novo_funcionario.salario <= 0) {
+      printf("Erro: Salário inválido. Digite novamente: ");
+      limpar_buffer(); 
+  }
 
+  if (strlen(novo_funcionario.nome_funcionario) == 0 || strlen(novo_funcionario.telefone_funcionario) == 0 || strlen(novo_funcionario.cargo) == 0) {
+      printf("Erro: Todos os campos devem ser preenchidos.\n");
+      return;
+  }
+  
   bool codigo_unico;
   do {
     codigo_unico = true;
@@ -64,7 +72,7 @@ void CadastrarFuncionario() {
   funcionarios[qtd_funcionaros++] = novo_funcionario;
   SalvarFuncionarios();
   printf("Funcionário cadastrado com sucesso! Código: %d\n",
-         novo_funcionario.cod_funcionario);
+  novo_funcionario.cod_funcionario);
 }
 
 void BuscarFuncionarioCodigo(char *termo_busca) {
