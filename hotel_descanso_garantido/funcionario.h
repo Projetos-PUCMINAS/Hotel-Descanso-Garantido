@@ -9,20 +9,20 @@
 #define MAX_FUNCIONARIOS 100
 
 typedef struct {
-int codigo;
-char nome[100];
-char telefone[15];
+int cod_funcionario;
+char nome_funcionario[100];
+char telefone_funcionario[15];
 char cargo[50];
 double salario;
 } Funcionario;
 
 extern Funcionario funcionarios[MAX_FUNCIONARIOS];
-extern int funcionario_count;
+extern int qtd_funcionaros;
 
-void carregar_funcionarios();
-void salvar_funcionarios();
-void cadastrar_funcionario();
-void buscar_funcionario_por_codigo(char* termo_busca);
-void mostrar_todos_funcionarios();
+void CarregarFuncionarios();
+void SalvarFuncionarios();
+void CadastrarFuncionario();
+void BuscarFuncionarioCodigo(char* termo_busca);
+void MostrarTodosFuncionarios();
 
 #endif // FUNCIONARIO_H

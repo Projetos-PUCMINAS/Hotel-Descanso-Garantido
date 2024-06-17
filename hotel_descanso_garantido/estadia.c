@@ -8,22 +8,22 @@
 #include <string.h>
 
 Estadia estadias[MAX_ESTADIAS];
-int estadia_count = 0;
+int qtd_estadias = 0;
 
-void carregar_estadias() {
+void CarregarEstadias() {
     FILE *file = fopen("estadias.dat", "rb");
     if (file != NULL) {
-        fread(&estadia_count, sizeof(int), 1, file);
-        fread(estadias, sizeof(Estadia), estadia_count, file);
+        fread(&qtd_estadias, sizeof(int), 1, file);
+        fread(estadias, sizeof(Estadia), qtd_estadias, file);
         fclose(file);
     }
 }
 
-void salvar_estadias() {
+void SalvarEstadias() {
     FILE *file = fopen("estadias.dat", "wb");
     if (file != NULL) {
-        fwrite(&estadia_count, sizeof(int), 1, file);
-        fwrite(estadias, sizeof(Estadia), estadia_count, file);
+        fwrite(&qtd_estadias, sizeof(int), 1, file);
+        fwrite(estadias, sizeof(Estadia), qtd_estadias, file);
         fclose(file);
     }
 }
@@ -40,8 +40,8 @@ int calcular_diarias(const char *data_entrada, const char *data_saida) {
     return total_dias_saida - total_dias_entrada;
 }
 
-void cadastrar_estadia() {
-    if (estadia_count >= MAX_ESTADIAS) {
+void CadastrarEstadia() {
+    if (qtd_estadias >= MAX_ESTADIAS) {
         printf("Erro: Número máximo de estadias atingido.\n");
         return;
     }
@@ -53,8 +53,8 @@ void cadastrar_estadia() {
     limpar_buffer(); 
 
     bool cliente_encontrado = false;
-    for (int i = 0; i < cliente_count; i++) {
-        if (clientes[i].codigo == codigo_cliente) {
+    for (int i = 0; i < qtd_clientes; i++) {
+        if (clientes[i].cod_cliente == codigo_cliente) {
             cliente_encontrado = true;
             break;
         }
@@ -66,7 +66,7 @@ void cadastrar_estadia() {
     }
 
     Estadia nova_estadia;
-    nova_estadia.codigo = estadia_count + 1;
+    nova_estadia.cod_estadia = qtd_estadias + 1;
     nova_estadia.codigo_cliente = codigo_cliente;
 
     printf("Digite a data de entrada (dd/mm/aaaa): ");
@@ -76,7 +76,7 @@ void cadastrar_estadia() {
     scanf("%s", nova_estadia.data_saida);
     limpar_buffer(); 
 
-    nova_estadia.quantidade_diarias = calcular_diarias(nova_estadia.data_entrada, nova_estadia.data_saida);
+    nova_estadia.qtd_diarias = calcular_diarias(nova_estadia.data_entrada, nova_estadia.data_saida);
 
     int quantidade_hospedes;
     printf("Digite a quantidade de hóspedes: ");
@@ -85,10 +85,10 @@ void cadastrar_estadia() {
 
     bool quarto_encontrado = false;
     int indice_quarto = -1;
-    for (int i = 0; i < quarto_count; i++) {
-        if (quartos[i].quantidade_hospedes >= quantidade_hospedes &&
+    for (int i = 0; i < qtd_quartos; i++) {
+        if (quartos[i].qtd_hospedes >= quantidade_hospedes &&
             strcmp(quartos[i].status, "desocupado") == 0) {
-            nova_estadia.numero_quarto = quartos[i].numero;
+            nova_estadia.codigo_quarto = quartos[i].cod_quarto;
             indice_quarto = i; 
             quarto_encontrado = true;
             break;
@@ -101,17 +101,17 @@ void cadastrar_estadia() {
     }
 
     strcpy(quartos[indice_quarto].status, "ocupado");
-    salvar_quartos();
+    SalvarQuartos();
 
-    estadias[estadia_count++] = nova_estadia;
-    salvar_estadias();
+    estadias[qtd_estadias++] = nova_estadia;
+    SalvarEstadias();
 
-    printf("Estadia cadastrada com sucesso! Código: %d\n", nova_estadia.codigo);
-    mostrar_numero_quarto(nova_estadia.codigo);
+    printf("Estadia cadastrada com sucesso! Código: %d\n", nova_estadia.cod_estadia);
+    MostrarNumeroQuarto(nova_estadia.cod_estadia);
 }
 
 
-void dar_baixa_estadia() {
+void DarBaixaEstadia() {
     int codigo_estadia;
     printf("Digite o código da estadia: ");
     scanf("%d", &codigo_estadia);
@@ -119,8 +119,8 @@ void dar_baixa_estadia() {
 
     int i;
     bool estadia_encontrada = false;
-    for (i = 0; i < estadia_count; i++) {
-        if (estadias[i].codigo == codigo_estadia) {
+    for (i = 0; i < qtd_quartos; i++) {
+        if (estadias[i].cod_estadia == codigo_estadia) {
             estadia_encontrada = true;
             break;
         }
@@ -132,16 +132,16 @@ void dar_baixa_estadia() {
     }
 
 
-    int numero_quarto = estadias[i].numero_quarto;
-    int quantidade_diarias = estadias[i].quantidade_diarias;
+    int numero_quarto = estadias[i].codigo_quarto;
+    int quantidade_diarias = estadias[i].qtd_diarias;
     double valor_diaria = 0;
 
-    for (int j = 0; j < quarto_count; j++) {
-        if (quartos[j].numero == numero_quarto) {
-            valor_diaria = quartos[j].valor_diaria;
+    for (int j = 0; j < qtd_quartos; j++) {
+        if (quartos[j].cod_quarto == numero_quarto) {
+            valor_diaria = quartos[j].v_diaria;
             strcpy(quartos[j].status, "desocupado");
-            salvar_quartos();
-            printf("Status do quarto %d alterado para desocupado.\n", quartos[j].numero);
+            SalvarQuartos();
+            printf("Status do quarto %d alterado para desocupado.\n", quartos[j].cod_quarto);
             break;
         }
     }
@@ -150,23 +150,23 @@ void dar_baixa_estadia() {
     printf("Valor total a ser pago pelo cliente: R$%.2f\n", valor_total);
 
 
-    for (int k = i; k < estadia_count - 1; k++) {
+    for (int k = i; k < qtd_estadias - 1; k++) {
         estadias[k] = estadias[k + 1];
     }
-    estadia_count--;
-    salvar_estadias();
+    qtd_estadias--;
+    SalvarEstadias();
 }
 
 
-void mostrar_estadias_cliente(int codigo_cliente) {
+void MostrarEstadiasCliente(int codigo_cliente) {
     bool encontrado = false;
-    for (int i = 0; i < estadia_count; i++) {
+    for (int i = 0; i < qtd_estadias; i++) {
         if (estadias[i].codigo_cliente == codigo_cliente) {
-            printf("Código da Estadia: %d\n", estadias[i].codigo);
+            printf("Código da Estadia: %d\n", estadias[i].cod_estadia);
             printf("Data de Entrada: %s\n", estadias[i].data_entrada);
             printf("Data de Saída: %s\n", estadias[i].data_saida);
-            printf("Quantidade de Diárias: %d\n", estadias[i].quantidade_diarias);
-            printf("Número do Quarto: %d\n", estadias[i].numero_quarto);
+            printf("Quantidade de Diárias: %d\n", estadias[i].qtd_diarias);
+            printf("Número do Quarto: %d\n", estadias[i].codigo_quarto);
             encontrado = true;
         }
     }
@@ -176,10 +176,10 @@ void mostrar_estadias_cliente(int codigo_cliente) {
     }
 }
 
-void mostrar_numero_quarto(int codigo_estadia) {
-    for (int i = 0; i < estadia_count; i++) {
-        if (estadias[i].codigo == codigo_estadia) {
-            printf("Número do Quarto: %d\n", estadias[i].numero_quarto);
+void MostrarNumeroQuarto(int codigo_estadia) {
+    for (int i = 0; i < qtd_estadias; i++) {
+        if (estadias[i].cod_estadia == codigo_estadia) {
+            printf("Número do Quarto: %d\n", estadias[i].codigo_quarto);
             return;
         }
     }
@@ -187,19 +187,19 @@ void mostrar_numero_quarto(int codigo_estadia) {
 }
 
 
-void mostrar_todas_estadias() {
-    if (estadia_count == 0) {
+void MostrarTodasEstadias() {
+    if (qtd_estadias == 0) {
         printf("Nenhuma estadia cadastrada.\n");
         return;
     }
 
     printf("Lista de Estadias:\n");
-    for (int i = 0; i < estadia_count; i++) {
-        printf("Código da Estadia: %d\n", estadias[i].codigo);
+    for (int i = 0; i < qtd_estadias; i++) {
+        printf("Código da Estadia: %d\n", estadias[i].cod_estadia);
         printf("Data de Entrada: %s\n", estadias[i].data_entrada);
         printf("Data de Saída: %s\n", estadias[i].data_saida);
-        printf("Quantidade de Diárias: %d\n", estadias[i].quantidade_diarias);
-        printf("Número do Quarto: %d\n", estadias[i].numero_quarto);
+        printf("Quantidade de Diárias: %d\n", estadias[i].qtd_diarias);
+        printf("Número do Quarto: %d\n", estadias[i].codigo_quarto);
         printf("------------------------\n");
     }
 }

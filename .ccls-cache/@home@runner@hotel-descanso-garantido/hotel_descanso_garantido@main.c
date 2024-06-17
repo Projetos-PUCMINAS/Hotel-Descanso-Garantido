@@ -28,52 +28,52 @@ void menu() {
 
         switch (opcao) {
             case 1:
-                cadastrar_cliente();
+                CadastrarCliente();
                 break;
             case 2:
-                cadastrar_funcionario();
+                CadastrarFuncionario();
                 break;
             case 3:
-                cadastrar_quarto();
+                CadastrarQuarto();
                 break;
             case 4:
-                cadastrar_estadia();
+                CadastrarEstadia();
                 break;
             case 5:
-                dar_baixa_estadia();
+                DarBaixaEstadia();
                 break;
             case 6: {
                 char termo_busca[50];
                 printf("Digite o nome ou código do cliente: ");
                 scanf(" %[^\n]", termo_busca);
-                buscar_cliente_por_codigo(termo_busca);
+                BuscarClienteCodigo(termo_busca);
                 break;
             }
             case 7: {
                 char termo_busca[50];
                 printf("Digite o nome ou código do funcionário: ");
                 scanf(" %[^\n]", termo_busca);
-                buscar_funcionario_por_codigo(termo_busca);
+                BuscarFuncionarioCodigo(termo_busca);
                 break;
             }
             case 8: {
                 int codigo_cliente;
                 printf("Digite o código do cliente: ");
                 scanf("%d", &codigo_cliente);
-                mostrar_estadias_cliente(codigo_cliente);
+                MostrarEstadiasCliente(codigo_cliente);
                 break;
             }
             case 9:
-                mostrar_todos_clientes();
+                MostrarTodosClientes();
                 break;
             case 10:
-                mostrar_todos_funcionarios();
+                MostrarTodosFuncionarios();
                 break;
             case 11:
-                mostrar_todos_quartos();
+                MostrarTodosQuartos();
                 break;
             case 12:
-                mostrar_todas_estadias();
+                MostrarTodasEstadias();
                 break;
             case 13:
                 printf("Saindo...\n");
@@ -85,14 +85,14 @@ void menu() {
 }
 
 int main() {
-    carregar_clientes();
-    carregar_funcionarios();
-    carregar_quartos();
-    carregar_estadias();
+    CarregarClientes();
+    CarregarFuncionarios();
+    CarregarQuartos();
+    CarregarEstadias();
     menu();
-    salvar_clientes();     
-    salvar_funcionarios(); 
-    salvar_quartos();      
-    salvar_estadias();     
+    SalvarClientes();     
+    SalvarFuncionarios(); 
+    SalvarQuartos();      
+    SalvarEstadias();     
     return 0;
 }

@@ -6,28 +6,28 @@
 #include "util.h"
 
 Quarto quartos[MAX_QUARTOS];
-int quarto_count = 0;
+int qtd_quartos = 0;
 
-void carregar_quartos() {
+void CarregarQuartos() {
 		FILE *file = fopen("quartos.dat", "rb");
 		if (file != NULL) {
-				fread(&quarto_count, sizeof(int), 1, file);
-				fread(quartos, sizeof(Quarto), quarto_count, file);
+				fread(&qtd_quartos, sizeof(int), 1, file);
+				fread(quartos, sizeof(Quarto), qtd_quartos, file);
 				fclose(file);
 		}
 }
 
-void salvar_quartos() {
+void SalvarQuartos() {
 		FILE *file = fopen("quartos.dat", "wb");
 		if (file != NULL) {
-				fwrite(&quarto_count, sizeof(int), 1, file);
-				fwrite(quartos, sizeof(Quarto), quarto_count, file);
+				fwrite(&qtd_quartos, sizeof(int), 1, file);
+				fwrite(quartos, sizeof(Quarto), qtd_quartos, file);
 				fclose(file);
 		}
 }
 
-void cadastrar_quarto() {
-		if (quarto_count >= MAX_QUARTOS) {
+void CadastrarQuarto() {
+		if (qtd_quartos >= MAX_QUARTOS) {
 				printf("Erro: Número máximo de quartos atingido.\n");
 				return;
 		}
@@ -36,9 +36,9 @@ void cadastrar_quarto() {
 		bool numero_unico;
 		do {
 				numero_unico = true;
-				novo_quarto.numero = rand() % 1000 + 1;
-				for (int i = 0; i < quarto_count; i++) {
-						if (quartos[i].numero == novo_quarto.numero) {
+				novo_quarto.cod_quarto = rand() % 1000 + 1;
+				for (int i = 0; i < qtd_quartos; i++) {
+						if (quartos[i].cod_quarto == novo_quarto.cod_quarto) {
 								numero_unico = false;
 								break;
 						}
@@ -47,44 +47,44 @@ void cadastrar_quarto() {
 
 		limpar_buffer();
 		printf("Digite a quantidade de hóspedes: ");
-		scanf("%d", &novo_quarto.quantidade_hospedes);
+		scanf("%d", &novo_quarto.qtd_hospedes);
 		limpar_buffer(); 
 
 		printf("Digite o valor da diária: ");
-		scanf("%lf", &novo_quarto.valor_diaria);
+		scanf("%lf", &novo_quarto.v_diaria);
 		limpar_buffer(); 
 
 		strcpy(novo_quarto.status, "desocupado");
 
-		quartos[quarto_count++] = novo_quarto;
-		salvar_quartos();
-		printf("Quarto cadastrado com sucesso! Número: %d, Status: %s\n", novo_quarto.numero, novo_quarto.status);
+		quartos[qtd_quartos++] = novo_quarto;
+			SalvarQuartos();
+		printf("Quarto cadastrado com sucesso! Número: %d, Status: %s\n", novo_quarto.cod_quarto, novo_quarto.status);
 }
 
-void alterar_status_quarto(int numero, const char* novo_status) {
-		for (int i = 0; i < quarto_count; i++) {
-				if (quartos[i].numero == numero) {
+void AlterarStatusQuarto(int num, const char* novo_status) {
+		for (int i = 0; i < qtd_quartos; i++) {
+				if (quartos[i].cod_quarto == num) {
 						strcpy(quartos[i].status, novo_status);
-						salvar_quartos();
-						printf("Status do quarto %d alterado para %s.\n", numero, novo_status);
+						SalvarQuartos();
+						printf("Status do quarto %d alterado para %s.\n", num, novo_status);
 						return;
 				}
 		}
-		printf("Erro: Quarto com número %d não encontrado.\n", numero);
+		printf("Erro: Quarto com número %d não encontrado.\n", num);
 }
 
 
-void mostrar_todos_quartos() {
-		if (quarto_count == 0) {
+void MostrarTodosQuartos() {
+		if (qtd_quartos == 0) {
 				printf("Nenhum quarto cadastrado.\n");
 				return;
 		}
 
 		printf("Lista de Quartos:\n");
-		for (int i = 0; i < quarto_count; i++) {
-				printf("Número: %d\n", quartos[i].numero);
-				printf("Quantidade de Hóspedes: %d\n", quartos[i].quantidade_hospedes);
-				printf("Valor da Diária: R$%.2f\n", quartos[i].valor_diaria);
+		for (int i = 0; i < qtd_quartos; i++) {
+				printf("Número: %d\n", quartos[i].cod_quarto);
+				printf("Quantidade de Hóspedes: %d\n", quartos[i].qtd_hospedes);
+				printf("Valor da Diária: R$%.2f\n", quartos[i].v_diaria);
 				printf("Status: %s\n", quartos[i].status);
 				printf("------------------------\n");
 		}

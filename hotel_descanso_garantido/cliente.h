@@ -9,21 +9,21 @@
 #define MAX_CLIENTES 100
 
 typedef struct {
-		int codigo;
-		char nome[50];
-		char endereco[100];
-		char telefone[15];
+		int cod_cliente;
+		char nome_cliente[50];
+		char endereco_cliente[100];
+		char telefone_cliente[15];
 		int pontos_fidelidade;
 } Cliente;
 
 extern Cliente clientes[MAX_CLIENTES];
-extern int cliente_count;
+extern int qtd_clientes;
 
-void carregar_clientes();
-void salvar_clientes();
-void cadastrar_cliente();
-void buscar_cliente_por_codigo(char* termo_busca);
+void CarregarClientes(); 
+void SalvarClientes();
+void CadastrarCliente();
+void BuscarClienteCodigo(char* termo_busca);
 int calcular_pontos_fidelidade(int codigo_cliente);
-void mostrar_todos_clientes();
+void MostrarTodosClientes();
 
 #endif // CLIENTE_H
