@@ -8,7 +8,7 @@
 FILE* InicializarSistemaClientes() {
 		FILE *f;
 		if ((f = fopen("clientes.dat", "r+b")) == NULL) {
-				printf("Arquivo não existia... criando arquivo!\n");
+				printf("Arquivo de clientes não existia... criando arquivo!\n");
 				if ((f = fopen("clientes.dat", "w+b")) == NULL) {
 						printf("Erro na criação do arquivo!\n");
 						exit(1);
@@ -194,7 +194,6 @@ void ImprimirClientes(FILE *f, FILE *f_estadias) {
 						printf("-----------------------\n");
 				}
 		}
-		printf("Pressione Enter para continuar...");
 		while (getchar() != '\n'); 
 		getchar(); 
 		while (getchar() != '\n'); 
@@ -216,8 +215,6 @@ void PesquisarClientePorNome(FILE *f, char *nome) {
 		if (!encontrou) {
 				printf("Nenhum cliente encontrado com o nome '%s'.\n", nome);
 		}
-
-		printf("Pressione Enter para continuar...");
 		while (getchar() != '\n');
 	getchar();
 	 while (getchar() != '\n'); 
@@ -239,6 +236,6 @@ void PesquisarClientePorCodigo(FILE *f, int cod_cliente) {
 		} else {
 				printf("Cliente com código %d não encontrado!\n", cod_cliente);
 		}
-	printf("Pressione Enter para continuar...");
+	printf("-----------------------\n");
 	getchar(); 
 }

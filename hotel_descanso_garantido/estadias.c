@@ -29,7 +29,7 @@ int VerificarDispobilidadeQuarto(FILE *f, int numero_quarto, char *data_entrada,
 
     while (!feof(f)) {
         if (estadia.num_quarto == numero_quarto) {
-            if (strcmp(estadia.data_saida, data_entrada) >= 0 && strcmp(estadia.data_entrada, data_saida) <= 0) {
+            if (strcmp(estadia.data_saida, data_entrada) > 0 && strcmp(estadia.data_entrada, data_saida) < 0) {
                 return 0; 
             }
         }
@@ -43,11 +43,11 @@ int VerificarDispobilidadeQuarto(FILE *f, int numero_quarto, char *data_entrada,
 void CadastrarEstadia(FILE *f, FILE *f_clientes, FILE *f_quartos) {
     Estadia estadia;
     Cliente cliente;
+    Quarto quarto;
     int codigo_cliente, num_hospedes;
     char data_entrada[11], data_saida[11];
     int num_quarto;
     int disponivel, quantidade_diarias;
-
 
     printf("Digite o código do cliente: ");
     scanf("%d", &codigo_cliente);
@@ -62,8 +62,7 @@ void CadastrarEstadia(FILE *f, FILE *f_clientes, FILE *f_quartos) {
     fread(&cliente, sizeof(Cliente), 1, f_clientes);
 
     if (cliente.excluido == 1) {
-        printf("Cliente com código %d está marcado como excluído!\n",
-               codigo_cliente);
+        printf("Cliente com código %d está marcado como excluído!\n", codigo_cliente);
         return;
     }
 
@@ -77,25 +76,33 @@ void CadastrarEstadia(FILE *f, FILE *f_clientes, FILE *f_quartos) {
     while (!disponivel) {
         printf("Digite o número de hóspedes: ");
         scanf("%d", &num_hospedes);
+
         fseek(f_quartos, 0, SEEK_SET);
-        Quarto quarto;
         fread(&quarto, sizeof(Quarto), 1, f_quartos);
         while (!feof(f_quartos)) {
             if (strcmp(quarto.status, "desocupado") == 0 && quarto.quantidade_hospedes >= num_hospedes) {
-                disponivel = 1;
-                num_quarto = quarto.numero;
-                break;
+                if (VerificarDispobilidadeQuarto(f, quarto.numero, data_entrada, data_saida)) {
+                    disponivel = 1;
+                    num_quarto = quarto.numero;
+
+                    strcpy(quarto.status, "ocupado");
+                    fseek(f_quartos, sizeof(Quarto) * LocalizarQuarto(f_quartos, num_quarto), SEEK_SET);
+                    fwrite(&quarto, sizeof(Quarto), 1, f_quartos);
+                    fflush(f_quartos);
+
+                    break;
+                }
             }
             fread(&quarto, sizeof(Quarto), 1, f_quartos);
         }
 
         if (!disponivel) {
-            printf("Nenhum quarto disponível para %d hóspede(s) encontrado.\n", num_hospedes);
+            printf("Nenhum quarto disponível para %d hóspede(s) encontrado no período de %s a %s.\n", num_hospedes, data_entrada, data_saida);
         }
     }
 
     quantidade_diarias = CalcularQuantDiarias(data_entrada, data_saida);
-    estadia.codigo_estadia =  GeradorCodEstadia(f);
+    estadia.codigo_estadia = GeradorCodEstadia(f);
     strcpy(estadia.data_entrada, data_entrada);
     strcpy(estadia.data_saida, data_saida);
     estadia.quantidade_diarias = quantidade_diarias;
@@ -105,8 +112,8 @@ void CadastrarEstadia(FILE *f, FILE *f_clientes, FILE *f_quartos) {
     fwrite(&estadia, sizeof(Estadia), 1, f);
     fflush(f);
     printf("Estadia cadastrada com sucesso!\n");
+    printf("Número do quarto utilizado no cadastro: %d\n", num_quarto);
 }
-
 
 
 void BaixaEstadia(FILE *f, FILE *f_quartos, FILE *f_clientes, int codigo_estadia) {
@@ -119,37 +126,36 @@ void BaixaEstadia(FILE *f, FILE *f_quartos, FILE *f_clientes, int codigo_estadia
   fread(&estadia, sizeof(Estadia), 1, f);
 
   while (!feof(f)) {
-    if (estadia.codigo_estadia == codigo_estadia) {
-      encontrou = 1;
+      if (estadia.codigo_estadia == codigo_estadia) {
+          encontrou = 1;
 
-      fseek(f_clientes,
-            sizeof(Cliente) * LocalizarCliente(f_clientes, estadia.cod_cliente),
-            SEEK_SET);
-      fread(&cliente, sizeof(Cliente), 1, f_clientes);
-      fseek(f_quartos, (estadia.num_quarto - 1) * sizeof(Quarto), SEEK_SET);
-      fread(&quarto, sizeof(Quarto), 1, f_quartos);
+          fseek(f_clientes, sizeof(Cliente) * LocalizarCliente(f_clientes, estadia.cod_cliente), SEEK_SET);
+          fread(&cliente, sizeof(Cliente), 1, f_clientes);
+          fseek(f_quartos, sizeof(Quarto) * LocalizarQuarto(f_quartos, estadia.num_quarto), SEEK_SET);
+          fread(&quarto, sizeof(Quarto), 1, f_quartos);
 
-      float valor_total = estadia.quantidade_diarias * quarto.valor_diaria;
+          float valor_total = estadia.quantidade_diarias * quarto.valor_diaria;
+          strcpy(quarto.status, "desocupado");
+          fseek(f_quartos, sizeof(Quarto) * LocalizarQuarto(f_quartos, estadia.num_quarto), SEEK_SET);
+          fwrite(&quarto, sizeof(Quarto), 1, f_quartos);
+          fflush(f_quartos);
 
-      strcpy(quarto.status, "desocupado");
-      fseek(f_quartos, (estadia.num_quarto - 1) * sizeof(Quarto), SEEK_SET);
-      fwrite(&quarto, sizeof(Quarto), 1, f_quartos);
-
-
-      printf("Estadia do cliente: %s\n", cliente.nome_cliente);
-      printf("Código da Estadia: %d\n", estadia.codigo_estadia);
-      printf("Data de Entrada: %s\n", estadia.data_entrada);
-      printf("Data de Saída: %s\n", estadia.data_saida);
-      printf("Quantidade de Diárias: %d\n", estadia.quantidade_diarias);
-      printf("Valor Total a ser pago: R$ %.2f\n", valor_total);
-      break;
-    }
-    fread(&estadia, sizeof(Estadia), 1, f);
+          printf("Estadia do cliente: %s\n", cliente.nome_cliente);
+          printf("Código da Estadia: %d\n", estadia.codigo_estadia);
+          printf("Data de Entrada: %s\n", estadia.data_entrada);
+          printf("Data de Saída: %s\n", estadia.data_saida);
+          printf("Quantidade de Diárias: %d\n", estadia.quantidade_diarias);
+          printf("Valor Total a ser pago: R$ %.2f\n", valor_total);
+          break;
+      }
+      fread(&estadia, sizeof(Estadia), 1, f);
   }
 
   if (!encontrou) {
-    printf("Estadia com código %d não encontrada.\n", codigo_estadia);
+      printf("Estadia com código %d não encontrada.\n", codigo_estadia);
   }
+
+    printf("-----------------------\n");
 }
 
 
@@ -182,21 +188,32 @@ int CalcularQuantDiarias(char *data_entrada, char *data_saida) {
 
 
 
-void ImprimirEstadias(FILE *f) {
-  Estadia estadia;
-  fseek(f, 0, SEEK_SET);
-  fread(&estadia, sizeof(Estadia), 1, f);
-  while (!feof(f)) {
-    printf("Código de Estadia: %d\n", estadia.codigo_estadia);
-    printf("Data de Entrada: %s\n", estadia.data_entrada);
-    printf("Data de Saída: %s\n", estadia.data_saida);
-    printf("Quantidade de Diárias: %d\n", estadia.quantidade_diarias);
-    printf("Código do Cliente: %d\n", estadia.cod_cliente);
-    printf("Número do Quarto: %d\n", estadia.num_quarto);
-    printf("\n");
-    fread(&estadia, sizeof(Estadia), 1, f);
-  }
+void ImprimirEstadias(FILE *f, FILE *f_clientes, FILE *f_quartos) {
+    Estadia estadia;
+    Cliente cliente;
+    Quarto quarto;
+    fseek(f, 0, SEEK_SET);
+
+    while (fread(&estadia, sizeof(Estadia), 1, f) == 1) {
+        fseek(f_clientes, sizeof(Cliente) * LocalizarCliente(f_clientes, estadia.cod_cliente), SEEK_SET);
+        fseek(f_quartos, sizeof(Quarto) * LocalizarQuarto(f_quartos, estadia.num_quarto), SEEK_SET);
+        fread(&quarto, sizeof(Quarto), 1, f_quartos);
+
+        printf("Código de Estadia: %d\n", estadia.codigo_estadia);
+        printf("Data de Entrada: %s\n", estadia.data_entrada);
+        printf("Data de Saída: %s\n", estadia.data_saida);
+        printf("Quantidade de Diárias: %d\n", estadia.quantidade_diarias);
+        printf("Código do Cliente: %d\n", estadia.cod_cliente);
+        printf("Nome do Cliente: %s\n", cliente.nome_cliente);
+        printf("Número do Quarto: %d\n", estadia.num_quarto);
+        printf("Status do Quarto: %s\n", quarto.status);
+        printf("-----------------------\n");
+    }
+    while (getchar() != '\n'); 
+    getchar(); 
+    while (getchar() != '\n'); 
 }
+
 
 
 
@@ -204,7 +221,7 @@ void MostrarEstadiasCliente(FILE *f_estadias, FILE *f_clientes,char *nome_or_cod
   Cliente cliente;
   int codigo_cliente;
 
- 
+
   if (sscanf(nome_or_codigo, "%d", &codigo_cliente) == 1) {
     PesquisarClientePorCodigo(f_clientes, codigo_cliente);
   } else {
@@ -236,5 +253,37 @@ void MostrarEstadiasCliente(FILE *f_estadias, FILE *f_clientes,char *nome_or_cod
     printf("Não foram encontradas estadias para o cliente encontrado.\n");
   }
 }
+
+
+
+void PesquisarEstadiaPorCodigo(FILE *f, int codigo_estadia) {
+    Estadia estadia;
+    int posicao = -1;
+
+    fseek(f, 0, SEEK_SET);
+    while (fread(&estadia, sizeof(Estadia), 1, f) == 1) {
+        if (estadia.codigo_estadia == codigo_estadia) {
+            posicao = ftell(f) / sizeof(Estadia) - 1;
+            break;
+        }
+    }
+
+    if (posicao != -1) {
+        fseek(f, sizeof(Estadia) * posicao, SEEK_SET);
+        fread(&estadia, sizeof(Estadia), 1, f);
+        printf("Código de Estadia: %d\n", estadia.codigo_estadia);
+        printf("Data de Entrada: %s\n", estadia.data_entrada);
+        printf("Data de Saída: %s\n", estadia.data_saida);
+        printf("Quantidade de Diárias: %d\n", estadia.quantidade_diarias);
+        printf("Código do Cliente: %d\n", estadia.cod_cliente);
+        printf("Número do Quarto: %d\n", estadia.num_quarto);
+    } else {
+        printf("Estadia com código %d não encontrada!\n", codigo_estadia);
+    }
+
+    printf("-----------------------\n");
+    getchar(); 
+}
+
 
 

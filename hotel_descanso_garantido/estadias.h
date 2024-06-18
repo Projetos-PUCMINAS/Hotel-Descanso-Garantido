@@ -17,7 +17,8 @@ int VerificarDispobilidadeQuarto(FILE *f, int numero_quarto, char *data_entrada,
 void CadastrarEstadia(FILE *f, FILE *f_clientes, FILE *f_quartos);
 int GeradorCodEstadia(FILE *f);
 int CalcularQuantDiarias(char *data_entrada, char *data_saida);
-void ImprimirEstadias(FILE *f);
+void ImprimirEstadias(FILE *f, FILE *f_clientes, FILE *f_quartos);
 void BaixaEstadia(FILE *f, FILE *f_quartos, FILE *f_clientes, int codigo_estadia);
 void MostrarEstadiasCliente(FILE *f_estadias, FILE *f_clientes, char *nome_or_codigo);
+void PesquisarEstadiaPorCodigo(FILE *f, int codigo_estadia);
 #endif // ESTADIAS_H_INCLUDED

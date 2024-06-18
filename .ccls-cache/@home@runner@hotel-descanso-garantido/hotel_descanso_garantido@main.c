@@ -145,33 +145,44 @@ int main() {
                 } while (op != 'e');
                 break;
             case '4':
-                do {
-                    printf("\nMenu Estadias:\n");
-                    printf("a - Cadastrar estadia\n");
-                    printf("b - Listar todas as estadias\n");
-                    printf("c - Baixa de estadia\n");
-                    printf("d - Voltar ao menu anterior\n");
-                    op = getchar();
-                    getchar(); 
-                    switch (op) {
-                        case 'a':
-                            CadastrarEstadia(f_estadias, f_clientes, f_quartos);
+            do {
+                printf("\nMenu Estadias:\n");
+                printf("a - Cadastrar estadia\n");
+                printf("b - Listar todas as estadias\n");
+                printf("c - Baixa de estadia\n");
+                printf("d - Pesquisar estadia por código\n");
+                printf("e - Voltar ao menu anterior\n");
+                op = getchar();
+                getchar(); 
+                switch (op) {
+                    case 'a':
+                        CadastrarEstadia(f_estadias, f_clientes, f_quartos);
+                        break;
+                    case 'b':
+                        ImprimirEstadias(f_estadias, f_clientes, f_quartos);
+                        break;
+                    case 'c':
+                        {
+                            int codigo_estadia;
+                            printf("Digite o código da estadia para realizar a baixa: ");
+                            scanf("%d", &codigo_estadia);
+                            getchar(); 
+                            BaixaEstadia(f_estadias, f_quartos, f_clientes, codigo_estadia);
                             break;
-                        case 'b':
-                            ImprimirEstadias(f_estadias);
+                        }
+                    case 'd':
+                        {
+                            int codigo_estadia;
+                            printf("Digite o código da estadia para pesquisar: ");
+                            scanf("%d", &codigo_estadia);
+                            getchar(); 
+                            PesquisarEstadiaPorCodigo(f_estadias, codigo_estadia);
                             break;
-                        case 'c':
-                            {
-                                int codigo_estadia;
-                                printf("Digite o código da estadia para realizar a baixa: ");
-                                scanf("%d", &codigo_estadia);
-                                getchar(); 
-                                BaixaEstadia(f_estadias, f_quartos, f_clientes, codigo_estadia);
-                                break;
-                            }
-                    }
-                } while (op != 'd');
-                break;
+                        }
+                }
+            } while (op != 'e');
+            break;
+
             case '5':
                 printf("Encerrando o sistema...\n");
                 break;

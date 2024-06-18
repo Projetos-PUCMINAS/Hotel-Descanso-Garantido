@@ -9,7 +9,7 @@ FILE* InicializarSistemaFuncionarios() {
     setlocale(LC_ALL, "portuguese");
 
     if ((f = fopen("funcionarios.dat", "r+b")) == NULL) {
-        printf("Arquivo não existia ... criando arquivo!\n");
+        printf("Arquivo de funcionairos não existia ... criando arquivo!\n");
         if ((f = fopen("funcionarios.dat", "w+b")) == NULL) {
             printf("Erro na criação do arquivo!\n");
             exit(1);
@@ -222,8 +222,7 @@ void PesquisarFuncionarioPorCodigo(FILE *f, int cod_funcionario) {
     } else {
         printf("Funcionário com código %d não encontrado!\n", cod_funcionario);
     }
-
-    printf("Pressione Enter para continuar...");
+    printf("-----------------------\n");
     while (getchar() != '\n'); 
     getchar(); 
 }
