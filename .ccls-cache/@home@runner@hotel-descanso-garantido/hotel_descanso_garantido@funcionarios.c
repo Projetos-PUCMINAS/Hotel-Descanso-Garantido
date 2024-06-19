@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <locale.h>
-
+/*Bem-vindo ao sistema do Hotel Descanso Garantido! Este projeto foi desenvolvido com dedicação por Gabriela, Luisa e Marcos, alunos do 1º período do curso de Engenharia de Software. Aproveite a sua estadia*/
 
 FILE* InicializarSistemaFuncionarios() {
     FILE *f;
