@@ -48,7 +48,6 @@ void CadastrarEstadia(FILE *f, FILE *f_clientes, FILE *f_quartos) {
     char data_entrada[11], data_saida[11];
     int num_quarto;
     int disponivel, quantidade_diarias;
-    char hora_chegada[6], hora_saida[6];
 
     printf("Digite o código do cliente: ");
     scanf("%d", &codigo_cliente);
@@ -72,12 +71,6 @@ void CadastrarEstadia(FILE *f, FILE *f_clientes, FILE *f_quartos) {
 
     printf("Digite a data de saída (formato dd/mm/aaaa): ");
     scanf("%s", data_saida);
-
-    printf("Digite a hora de chegada (formato HH:MM): ");
-    scanf("%s", hora_chegada);
-
-    printf("Digite a hora de saída (formato HH:MM): ");
-    scanf("%s", hora_saida);
 
     disponivel = 0;
     while (!disponivel) {
@@ -108,12 +101,10 @@ void CadastrarEstadia(FILE *f, FILE *f_clientes, FILE *f_quartos) {
         }
     }
 
-    quantidade_diarias = CalcularQuantDiarias(data_entrada, hora_chegada, data_saida, hora_saida);
-
+    quantidade_diarias = CalcularQuantDiarias(data_entrada, data_saida);
     estadia.codigo_estadia = GeradorCodEstadia(f);
     strcpy(estadia.data_entrada, data_entrada);
     strcpy(estadia.data_saida, data_saida);
-    strcpy(estadia.hora_saida, hora_saida);
     estadia.quantidade_diarias = quantidade_diarias;
     estadia.cod_cliente = codigo_cliente;
     estadia.num_quarto = num_quarto;
@@ -185,35 +176,15 @@ int  GeradorCodEstadia(FILE *f) {
 
 
 
-int CalcularQuantDiarias(char *data_entrada, char *hora_chegada, char *data_saida, char *hora_saida) {
-    int dia_entrada, mes_entrada, ano_entrada;
-    int dia_saida, mes_saida, ano_saida;
-    int hora_entrada, min_entrada, hora_saida_val, min_saida;
-    sscanf(data_entrada, "%d/%d/%d", &dia_entrada, &mes_entrada, &ano_entrada);
-    sscanf(data_saida, "%d/%d/%d", &dia_saida, &mes_saida, &ano_saida);
-    sscanf(hora_chegada, "%d:%d", &hora_entrada, &min_entrada);
-    sscanf(hora_saida, "%d:%d", &hora_saida_val, &min_saida);
+int CalcularQuantDiarias(char *data_entrada, char *data_saida) {
+  int dia_entrada, mes_entrada, ano_entrada;
+  int dia_saida, mes_saida, ano_saida;
+  sscanf(data_entrada, "%d/%d/%d", &dia_entrada, &mes_entrada, &ano_entrada);
+  sscanf(data_saida, "%d/%d/%d", &dia_saida, &mes_saida, &ano_saida);
 
-    int dias_totais = ((ano_saida - ano_entrada) * 365 + (mes_saida - mes_entrada) * 30 + (dia_saida - dia_entrada));
-    int horas_totais = (hora_saida_val - hora_entrada) * 60 + (min_saida - min_entrada);
-
-    if (horas_totais < 0) {
-        horas_totais += 24 * 60; // Corrigir para o dia seguinte
-        dias_totais--; // Considerar como um dia a menos
-    }
-
-    if (hora_entrada < 14) {
-        dias_totais--; // Menos um dia se a entrada for depois das 14h
-    }
-
-    if (hora_saida_val >= 12) {
-        dias_totais++; // Mais um dia se a saída for às 12h ou depois
-    }
-
-    return dias_totais;
+  return ((ano_saida - ano_entrada) * 365 + (mes_saida - mes_entrada) * 30 +
+          (dia_saida - dia_entrada));
 }
-
-
 
 
 
